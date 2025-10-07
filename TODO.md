@@ -1,0 +1,5 @@
+- [ ] Add weather functionnality
+- [ ] Style using tailwind css
+- [ ] review && refactor
+- [ ] add map functionnality? 
+- [ ] Deploy on vercel, rename the project as Hay'Geo 
