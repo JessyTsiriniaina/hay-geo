@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import Map from './Map';
 
 
 export const ViewCountry = ({name}) => {
@@ -78,6 +79,7 @@ export const ViewCountry = ({name}) => {
         <img src={`https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png`} alt={`${weatherInfo.description} weather icon`} />
         <p><b>Temperature: </b>{weatherInfo.temp} °C, <b>Max: </b>{weatherInfo.temp_max} °C, <b>Min: </b>{weatherInfo.temp_min} °C</p>
         <p><b>Wind: </b>{weatherInfo.wind_speed} m/s</p>
+        <Map latitute={country.latlng[0]} longitude={country.latlng[1]}/>
     </div>
   )
 }
