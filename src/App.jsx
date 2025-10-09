@@ -3,12 +3,14 @@ import axios from 'axios'
 import './App.css'
 import { Country } from './components/Country';
 import { ViewCountry } from './components/ViewCountry';
+import { GridLoader } from "react-spinners";
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [search, setSearch] = useState('');
-  const [filteredCountries, setFilteredCountries] = useState(countries);
+  const [filteredCountries, setFilteredCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,6 +18,7 @@ function App() {
       .then(response => {
         console.log(response.data);
         setCountries(response.data);
+        setFilteredCountries(response.data)
       })
       .then (() => setIsLoading(false))
     }
@@ -36,29 +39,45 @@ function App() {
     setSearch(event.target.value);
   }
 
-  const handleShow = (name) => {
-    setSearch(name)
-    console.log(name)
+  const handleShow = (country) => {
+    setSelectedCountry(country);
   }
 
-  if(isLoading) {
-    return <div>Chargement...</div>
-  }
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-screen h-screen">
+        <GridLoader />
+      </div> 
+    )
+  } 
 
   return (
     <>
-      <label>find countries <input type="text" value={search} onChange={handleChange}/></label>
-      {
-        filteredCountries.length > 10 ? (
-          <div>Too many matches, specify another filter</div>
-        ) : filteredCountries.length === 1 ? (
-          <ViewCountry name={filteredCountries[0].name.common}/>
-        ) : (
-          filteredCountries.map(country => 
-            <Country key={country.name.common} name={country.name.common} handleShow={()=>handleShow(country.name.common)}/>
-          )
-        )
-      }
+      <div className='flex w-screen h-screen max-w-screen max-h-screen'> 
+        <div className='w-1/3 max-h-full'>
+          <label for='search' className='text-gray-700 tx-lg block'>Find countries</label>
+          <input 
+            id='search'
+            name="search" 
+            type="text" 
+            value={search} 
+            onChange={handleChange}
+            className='border-1 rounded-md border-gray-400 px-[4px] py-[4px]'
+          />
+          <div className='overflow-y-scroll max-h-2/3'>
+            {
+              filteredCountries.map(country => 
+                <Country key={country.name.common} name={country.name.common} handleShow={()=>handleShow(country)}/>
+              )
+            }
+
+          </div>
+        </div>
+
+        <div className='overflow-y-scroll w-2/3 max-h-full'>
+          <ViewCountry country={selectedCountry}/>
+        </div>
+      </div>
     </>
   )
 }

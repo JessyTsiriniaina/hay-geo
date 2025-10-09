@@ -1,31 +1,19 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
 import Map from './Map';
+import { GridLoader } from "react-spinners";
 
 
-export const ViewCountry = ({name}) => {
-  const [country, setCountry] = useState(null);
+export const ViewCountry = ({country}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [weatherInfo, setWeatherInfo] = useState(null);
 
   useEffect(() => {
-    const fetchCountry = async () => {
-      try {
-        const response = await axios.get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`);
-        setCountry(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchCountry();
-  }, [name]);
-
-  useEffect(() => {
     const fetchWeather = async () => {
-      if (country && country.capital && country.capital.length > 0) {
+      if(country) {
         try {
+          setIsLoading(true);
+          console.log(country);
           const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
           const latitude = country.latlng[0];
           const longitude = country.latlng[1];
@@ -39,7 +27,7 @@ export const ViewCountry = ({name}) => {
               temp_max: response.data.main.temp_max,
               temp: response.data.main.temp,
               wind_speed: response.data.wind.speed,
-              descrption: response.data.weather[0].description,
+              description: response.data.weather[0].description,
               icon: response.data.weather[0].icon
             }
 
@@ -53,17 +41,27 @@ export const ViewCountry = ({name}) => {
           setIsLoading(false);
         }
       }
-    };
+    }
 
     fetchWeather();
   }, [country]);
 
-  if(isLoading) {
-    return <div>Chargement...</div>
+  if(country === null) {
+    return (
+      <h1>No country selected</h1>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <GridLoader />
+      </div> 
+    )
   }
 
   return (
-    <div>
+    <>
         <h1>{country.name.common}</h1>
         <p>Capital {country.capital[0]}</p>
         <p>Area {country.area}</p>
@@ -80,6 +78,6 @@ export const ViewCountry = ({name}) => {
         <p><b>Temperature: </b>{weatherInfo.temp} °C, <b>Max: </b>{weatherInfo.temp_max} °C, <b>Min: </b>{weatherInfo.temp_min} °C</p>
         <p><b>Wind: </b>{weatherInfo.wind_speed} m/s</p>
         <Map latitute={country.latlng[0]} longitude={country.latlng[1]}/>
-    </div>
+    </>
   )
 }

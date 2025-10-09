@@ -1,5 +1,10 @@
 - [x] Add weather functionnality
 - [ ] Style using tailwind css
+- [ ] utiliser react-spinner pour le chargement
+- [ ] implement un etat multiple pour les requettes (idle, loading, success, error)
 - [ ] review && refactor
+  - [x] Optimize network data fetching
+  - [ ] Extract reusable components
+  - [ ] Manage states efficiently 
 - [x] add map functionnality? 
 - [ ] Deploy on vercel, rename the project as Hay'Geo 
