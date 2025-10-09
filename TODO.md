@@ -7,4 +7,5 @@
   - [ ] Extract reusable components
   - [ ] Manage states efficiently 
 - [x] add map functionnality? 
+- [ ] handle local countries list update (localstorage)
 - [ ] Deploy on vercel, rename the project as Hay'Geo 
