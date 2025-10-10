@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -14,4 +9,8 @@
     -ms-overflow-style: none; 
     scrollbar-width: none;
   }
+}
+
+.container {
+  padding: 2rem;
 }
