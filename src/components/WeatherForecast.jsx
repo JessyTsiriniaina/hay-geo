@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
 import { GridLoader } from "react-spinners";
-import { CloudDrizzle, CloudLightning, CloudSun, Snowflake, Sun } from 'lucide-react';
+import { CloudDrizzle, CloudLightning, CloudSun, Snowflake, Sun, CloudRain } from 'lucide-react';
 
 export const WeatherForecast = ({longitude, latitude}) => {
   const [isLoading, setIsLoading] = useState(true);

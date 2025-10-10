@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import './App.css'
 import { Country } from './components/Country';
@@ -14,26 +14,27 @@ function App() {
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [open, setOpen] = useState(false);
+  const suggestionBoxRef = useRef(null)
 
 
   useEffect(() => {
     const fetchData = async () => {
       const localCountries = localStorage.getItem('countries');
-      if(localCountries !== null) {
+      if (localCountries !== null) {
         setCountries(JSON.parse(localCountries));
-        setFilteredCountries(JSON.parse(localCountries));
         setIsLoading(false);
       } else {
 
-      
-      await axios.get('https://studies.cs.helsinki.fi/restcountries/api/all')
-      .then(response => {
-        setCountries(response.data);
-        setFilteredCountries(response.data)
-        localStorage.setItem('countries', JSON.stringify(response.data))
-      })
-      .then (() => setIsLoading(false))
-    }
+
+        await axios.get('https://studies.cs.helsinki.fi/restcountries/api/all')
+          .then(response => {
+            setCountries(response.data);
+            setFilteredCountries(response.data)
+            localStorage.setItem('countries', JSON.stringify(response.data))
+          })
+          .then(() => setIsLoading(false))
+      }
     }
 
     fetchData();
@@ -43,15 +44,24 @@ function App() {
     setFilteredCountries(
       countries.filter(
         country => country.name.common.toLowerCase().includes(search.toLowerCase()
-      ))
+        ))
     )
-    setSelectedCountry(countries[1])
 
   }, [countries, search]);
 
-  const handleShow = (country) => {
-    setSelectedCountry(country);
-  } 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (suggestionBoxRef.current && !suggestionBoxRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
 
   return (
     <>
@@ -92,9 +102,45 @@ function App() {
                     value={search}
                     onChange={(e) => {
                       setSearch(e.target.value);
+                      setOpen(true);
                     }}
+                    onFocus={() => setOpen(true)}
                   />
                 </div>
+
+                {open && <div className=" z-50 w-72 rounded-md border border-gray-200 bg-white p-4 
+                                          text-gray-800 shadow-md outline-none p-0 absolute"
+                  align="start"
+                >
+                  <div className='max-h-[300px] overflow-y-auto overflow-x-hidden'>
+                    <div className='overflow-hidden p-1' ref={suggestionBoxRef}>
+                      {filteredCountries.length === 0 ?
+                        (<div className='text-gray-400 text-sm'>No country found</div>) :
+                        (filteredCountries
+                          .filter((country) =>
+                            country.name.common.toLowerCase().includes(search.toLowerCase())
+                          )
+                          .slice(0, 10)
+                          .map((country) => (
+                            <div className="relative flex cursor-pointer select-none 
+                                          items-center rounded-sm px-2 py-1.5 text-sm 
+                                          outline-none hover:bg-gray-100"
+                              key={country.name.common}
+                              value={country.name.common}
+                              onClick={() => {
+                                setSearch(country.name.common);
+                                setSelectedCountry(country);
+                                setOpen(false);
+                              }}
+                            >
+                              {country.name.common}
+                            </div>
+                          )))}
+
+                    </div>
+                  </div>
+
+                </div>}
               </div>
             </div>
           </div>
@@ -102,7 +148,7 @@ function App() {
           {/*Information country */}
           {isLoading && (
             <div className="text-center py-12">
-              <GridLoader color='#00BCD4'/>
+              <GridLoader color='#00BCD4' />
             </div>
           )}
 
@@ -118,7 +164,7 @@ function App() {
           {selectedCountry && !isLoading && (
             <div className="space-y-6 animate-in fade-in duration-500">
               <CountryInfo country={selectedCountry} />
-              
+
               <div className="grid gap-6 lg:grid-cols-1">
                 <WeatherForecast
                   latitude={selectedCountry.latlng[0]}
