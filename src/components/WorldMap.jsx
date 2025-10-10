@@ -10,7 +10,7 @@ function MapPlaceholder() {
   )
 }
 
-const WorldMap = ({ longitude, latitude }) => {
+const WorldMap = ({longitude, latitude }) => {
 
   return (
     <>

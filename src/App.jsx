@@ -171,6 +171,7 @@ function App() {
                   longitude={selectedCountry.latlng[1]}
                 />
                 <WorldMap
+                  key={selectedCountry.name.common}
                   latitude={selectedCountry.latlng[0]}
                   longitude={selectedCountry.latlng[1]}
                 />
